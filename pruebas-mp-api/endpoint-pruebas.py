@@ -1,7 +1,7 @@
 import mercadopago
 
 # Configura el cliente
-sdk = mercadopago.SDK("---")
+sdk = mercadopago.SDK("APP_USR-6203695664524092-112018-b709425ad6bd583997aa19831a0688b9-477760037")
 
 def obtener_transferencias(fecha_inicio, fecha_fin):
     transfers = []
@@ -10,7 +10,7 @@ def obtener_transferencias(fecha_inicio, fecha_fin):
         "range": "date_created",
         "begin_date": fecha_inicio,
         "end_date": fecha_fin,
-        "status": "approved"  # Opcional: Solo transferencias aprobadas
+#        "status": "approved"  # Opcional: Solo transferencias aprobadas
     }
     
     response = sdk.payment().search(filters=filtros)
@@ -21,7 +21,7 @@ def obtener_transferencias(fecha_inicio, fecha_fin):
 
     return transfers  # Aquí están las transferencias
     
-transfers = obtener_transferencias('2024-11-14T00:00:00Z', '2024-11-20T23:59:59Z')
+transfers = obtener_transferencias('2024-11-14T00:00:00Z', '2024-11-22T23:59:59Z')
 
 
 
