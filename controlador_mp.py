@@ -2,7 +2,7 @@ import mercadopago
 from mercadopago.config import RequestOptions
 from movimiento import Transferencia
 from datetime import datetime, timezone, timedelta
-from dotenv import load_dotenv, find_dotenv
+#from dotenv import load_dotenv, find_dotenv
 import os
 
 

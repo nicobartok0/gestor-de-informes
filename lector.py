@@ -148,9 +148,17 @@ class Lector:
                 'categoria': '',
                 'met_pago': '-',
                 'monto': '',
-                'sector': sucursal,
+                'sector': '',
                 'obs': ''
                 }
+                if 'FRIGO' in row[2]:
+                    mov['sector'] = 'FRIGO'
+                elif 'GRANJA' in row[2]:
+                    mov['sector'] = 'GRANJA'
+                elif 'ADMIN' in row[2]:
+                    mov['sector'] = 'ADMIN'
+                else:
+                    mov['sector'] = sucursal
                 mov['fecha'] = row[0]
                 mov['categoria'] = row[1]
                 mov['obs'] = row[2]

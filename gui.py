@@ -161,7 +161,7 @@ def actualizar_tabla(sender, app_data):
         print('ACTUALIZAR TABLA DE EGRESOS')
         actualizar_tabla_egresos()
     else:
-        print(f'ME CAGO EN LA PUTAAA {app_data}')
+        print(f'{app_data}')
 
 def actualizar_selector(tabla):
     selector.set_tabla_actual(tabla)
@@ -204,16 +204,26 @@ with dpg.window(tag="MainWindow", label="Gestión de Movimientos de Dinero", wid
             dpg.add_combo(["INGRESO", "EGRESO"], tag="tipo_combo", default_value="INGRESO")
             
             # Fecha
-            dpg.add_text("Fecha (DD/MM/YY):")
+            dpg.add_text("Fecha (DD/MM/YYYY):")
             dpg.add_input_text(tag="fecha_input", hint="Ej. 26-11-2024", width=150)
             
             # Categoría
             dpg.add_text("Categoría:")
-            dpg.add_input_text(tag="categoria_input", hint="Ej. Alquiler", width=200)
+            dpg.add_combo(["Aditivos", "Afiliado", "Alimento Granja", "Alquiler", 
+                           "Colaboración", "Combustible", "Consumo Personal", "Descartables", 
+                           "Desinfección", "Dosis de inseminación", "Frío Andino", 
+                           "Gastos administrativos", "Gastos bancarios", "Higiene y seguridad", 
+                           "Honorarios profesionales", "Indumentaria", "Insumos", 
+                           "Laboratorio/Medicamentos/Vacunas granja", "Librería", "Limpieza", 
+                           "Mano de Obra/Contratista", "Mantenimiento Vehículos", "Maquinas/Herramientas", 
+                           "Matadero", "Material de construcción", "Medicina Laboral", "Mercadería para la venta", 
+                           "Publicidad", "Retiro", "Seguros", "Servicio Técnico", "Servicios e Impuestos", 
+                           "Sindicatos", "Stopcar", "Sueldos", "Transporte/Encomienda"], 
+                          tag="categoria_input", default_value="Efectivo")
             
             # Método de pago
             dpg.add_text("Método de Pago:")
-            dpg.add_combo(["Transferencia", "Efectivo", "Depósito", "QR", "Cheque", "Otro"], 
+            dpg.add_combo(["Transferencia", "Efectivo", "Depósito", "Cheque emitido", "Cheque endosado", "Débito automático", "Caja chica Buenos Aires", "Acreditación", "Caja chica Alvear", "Caja chica San Rafael", "Caja chica San Martín","Otro"], 
                           tag="metodo_pago_combo", default_value="Efectivo")
             
             # Sucursal
