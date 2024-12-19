@@ -19,7 +19,7 @@ def file_selected_callback_cc(sender, app_data):
     
     print('Ruta: ' + str({app_data['file_path_name']}))
     print(dpg.get_value('combo_cc'))
-    operador.cargar_caja_chica(ruta=app_data['file_path_name'], sucursal=dpg.get_value('combo_cc'))
+    operador.cargar_caja_chica(ruta=app_data['file_path_name'], sucursal=dpg.get_value('combo_cc'), met_pago=dpg.get_value('metodo_pago_combo_2'))
 
 # Función de callback para cuando seleccionan un archivo de CONSOLIDACIÓN DE GASTOS
 def file_selected_callback_cg(sender, app_data):
@@ -102,14 +102,14 @@ def cerrar_ventana_transferencias_mp():
     dpg.hide_item("ventana_transferencias_mp")
 
 # Función para actualizar una tabla
-def actualizar_tabla_ingresos():
+def actualizar_tabla_ingresos(filtro):
     print('INGRESOS')
     # Limpiamos la tabla antes de actualizarla
     rows = dpg.get_item_children(item='tabla_ingresos', slot=1)
     for row in rows:
         dpg.delete_item(row)
     # Lógica de actualización de tabla utilizando los valores de diccionario de cada movimiento
-    for movimiento in operador.return_ingresos():
+    for movimiento in operador.return_ingresos(filtro):
         elementos = []
         for element in movimiento.__dict__.values():
             if element != 'INGRESO':
@@ -118,14 +118,14 @@ def actualizar_tabla_ingresos():
             for i in range(6):
                 dpg.add_text(f"{elementos[i]}")
 
-def actualizar_tabla_egresos():
+def actualizar_tabla_egresos(filtro):
     print('EGRESOS')
     # Limpiamos la tabla antes de actualizarla
     rows = dpg.get_item_children(item='tabla_egresos', slot=1)
     for row in rows:
         dpg.delete_item(row)
     # Lógica de actualización de tabla utilizando los valores de diccionario de cada movimiento
-    for movimiento in operador.return_egresos():
+    for movimiento in operador.return_egresos(filtro):
             elementos = []
             for element in movimiento.__dict__.values():
                 if element != 'EGRESO':
@@ -156,10 +156,10 @@ def actualizar_tabla(sender, app_data):
     tab = dpg.get_item_user_data(app_data)
     if tab == 'INGRESOS':
         print('ACTUALIZAR TABLA DE INGRESOS')
-        actualizar_tabla_ingresos()
+        actualizar_tabla_ingresos(filtro=None)
     elif tab == 'EGRESOS':
         print('ACTUALIZAR TABLA DE EGRESOS')
-        actualizar_tabla_egresos()
+        actualizar_tabla_egresos(filtro=None)
     else:
         print(f'{app_data}')
 
@@ -223,12 +223,14 @@ with dpg.window(tag="MainWindow", label="Gestión de Movimientos de Dinero", wid
             
             # Método de pago
             dpg.add_text("Método de Pago:")
-            dpg.add_combo(["Transferencia", "Efectivo", "Depósito", "Cheque emitido", "Cheque endosado", "Débito automático", "Caja chica Buenos Aires", "Acreditación", "Caja chica Alvear", "Caja chica San Rafael", "Caja chica San Martín","Otro"], 
+            dpg.add_combo(["Transferencia", "Efectivo", "Depósito", "Cheque emitido", "Cheque endosado", "Débito automático", 
+                           "Caja chica Buenos Aires", "Acreditación", "Caja chica Alvear", "Caja chica San Rafael", 
+                           "Caja chica San Martín","Otro"], 
                           tag="metodo_pago_combo", default_value="Efectivo")
             
             # Sucursal
             dpg.add_text("Sucursal / Área:")
-            dpg.add_combo(["Alvear", "San Rafael", "San Martín", "Frigorífico", "Casa Central", "Granja", "Otro"], 
+            dpg.add_combo(["ALVEAR", "SAN RAFAEL", "SAN MARTIN", "FRIGO", "CASA CENTRAL", "GRANJA", "OTRO"], 
                           tag="sucursales_combo", default_value="Alvear")
             
             # Monto
@@ -247,8 +249,8 @@ with dpg.window(tag="MainWindow", label="Gestión de Movimientos de Dinero", wid
             actualizar_selector('INGRESOS')
             dpg.add_text("Lista de Ingresos:")
             dpg.add_text('Filtrado por área')
-            dpg.add_combo(["Alvear", "San Rafael", "San Martín", "Frigorífico", "Casa Central", "Granja", "Otro", "-"], 
-                          tag="sucursales_combo_f_e", default_value="-")
+            dpg.add_combo(["ALVEAR", "SAN RAFAEL", "SAN MARTÍN", "FRIGO", "CASA CENTRAL", "GRANJA", "OTRO"], 
+                          tag="sucursales_combo_f_e", default_value="-", callback=lambda: actualizar_tabla_ingresos(filtro=dpg.get_value('sucursales_combo_f_e')))
             with dpg.table(header_row=True, tag="tabla_ingresos"):
                 dpg.add_table_column(label="Fecha")
                 dpg.add_table_column(label="Categoría")
@@ -262,8 +264,8 @@ with dpg.window(tag="MainWindow", label="Gestión de Movimientos de Dinero", wid
             actualizar_selector('EGRESOS')
             dpg.add_text("Lista de Egresos:")
             dpg.add_text('Filtrado por área')
-            dpg.add_combo(["Alvear", "San Rafael", "San Martín", "Frigorífico", "Casa Central", "Granja", "Otro", "-"], 
-                          tag="sucursales_combo_f_i", default_value="-")
+            dpg.add_combo(["ALVEAR", "SAN RAFAEL", "SAN MARTÍN", "FRIGO", "CASA CENTRAL", "GRANJA", "OTRO"], 
+                          tag="sucursales_combo_f_i", default_value="-", callback=lambda: actualizar_tabla_egresos(filtro=dpg.get_value('sucursales_combo_f_i')))
             with dpg.table(header_row=True, tag="tabla_egresos"):
                 dpg.add_table_column(label="Fecha")
                 dpg.add_table_column(label="Categoría")
@@ -284,7 +286,12 @@ with dpg.window(tag="ventana_api_key", label="Cargar API_KEY", width=400, height
 with dpg.window(tag="ventana_caja_chica", label="Cargar caja chica", width=400, height=200, show=False):
     dpg.add_text("CAJA CHICA")
     dpg.add_text('Este EXCEL de Caja Chica corresponde a la sucursal: ')
-    dpg.add_combo(tag='combo_cc', items=['SAN RAFAEL', 'ALVEAR', 'SAN MARTÍN', 'FRIGORÍFICO', 'CASA CENTRAL', 'GRANJA', 'CAMPO'])
+    dpg.add_combo(tag='combo_cc', items=['SAN RAFAEL', 'ALVEAR', 'SAN MARTÍN', 'FRIGO', 'CASA CENTRAL', 'GRANJA', 'CAMPO'])
+    dpg.add_text('Con el método de pago: ')
+    dpg.add_combo(["Transferencia", "Efectivo", "Depósito", "Cheque emitido", "Cheque endosado", "Débito automático", 
+                           "Caja chica Buenos Aires", "Acreditación", "Caja chica Alvear", "Caja chica San Rafael", 
+                           "Caja chica San Martín","Otro"], 
+                          tag="metodo_pago_combo_2", default_value="Efectivo")
     dpg.add_text('Ruta del archivo excel: ')
     dpg.add_button(tag='button_ruta_excel_cc', label='Buscar EXCEL', callback=lambda: dpg.show_item('file_dialog_id_cc'))
 
@@ -303,7 +310,11 @@ with dpg.window(tag='ventana_transferencias_mp', label='Cargar transferencias de
     dpg.add_input_text(tag= 'dia_mp', label='Día (DD)')
     dpg.add_input_text(tag= 'mes_mp', label='Mes (MM)')
     dpg.add_input_text(tag= 'año_mp', label='Año (YYYY)')
-    dpg.add_button(label='Obtener transferencias', callback=lambda: operador.obtener_transferencias_mp(dia=dpg.get_value('dia_mp'), mes=dpg.get_value('mes_mp'), año=dpg.get_value('año_mp')))
+    dpg.add_input_text(tag= 'dia_mp_fin', label='Día (DD)')
+    dpg.add_input_text(tag= 'mes_mp_fin', label='Mes (MM)')
+    dpg.add_input_text(tag= 'año_mp_fin', label='Año (YYYY)')
+    dpg.add_button(label='Obtener transferencias', callback=lambda: operador.obtener_transferencias_mp(dia=dpg.get_value('dia_mp'), mes=dpg.get_value('mes_mp'), año=dpg.get_value('año_mp')
+                                                                                                       , dia_fin=dpg.get_value('dia_mp_fin'),mes_fin=dpg.get_value('mes_mp_fin'),año_fin=dpg.get_value('año_mp_fin')))
 
 # Crear la ventana para CARGAR LOS INFORMES AUTOMÁTICOS AL OPERADOR
 with dpg.window(tag='ventana_cargar_informe', label='Cargar Informe', width=400, height=200, show=False):

@@ -128,7 +128,7 @@ class Lector:
         print(self.movimientos)
         return self.movimientos
 
-    def cargar_caja_chica(self, ruta, sucursal):
+    def cargar_caja_chica(self, ruta, sucursal, met_pago):
         # Se carga el WORKBOOK de excel que se va a usar y se activa la primer hoja
         self.wb = load_workbook(ruta)
         sheet = self.wb.active
@@ -146,7 +146,7 @@ class Lector:
                 'tipo': 'EGRESO',
                 'fecha': '',
                 'categoria': '',
-                'met_pago': '-',
+                'met_pago': met_pago,
                 'monto': '',
                 'sector': '',
                 'obs': ''

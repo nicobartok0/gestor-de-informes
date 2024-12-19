@@ -17,18 +17,12 @@ class Controlador_MP:
         self.id = self.sdk.user().get(request_options)['response']['id']
         print(self.id)
 
-    def obtener_transferencias(self, fecha_inicio):
+    def obtener_transferencias(self, fecha_inicio, fecha_fin):
         transfers = []
         # Sacamos la fecha actual
-        zona_argentina = timezone(timedelta(hours=-3))
-        fecha_fin = datetime.now(zona_argentina).strftime('%Y-%m-%dT%H:%M:%SZ')
-        
-
-        print(fecha_fin == '2024-11-28T12:38:55Z')
-        print(fecha_fin)
 
 
-# 2024-11-28T15:35:18Z
+        # 2024-11-28T15:35:18Z
         filtros = {
             "range": "date_created",
             #"begin_date": fecha_inicio,
@@ -68,7 +62,6 @@ class Controlador_MP:
                     mov['tipo'] = 'INGRESO'
             elif element['operation_type'] == 'bank_transfer':
                 try:
-                    print(element['net_received_amount'])
                     mov['tipo'] = 'INGRESO'
                 except:
                     mov['tipo'] = 'EGRESO'

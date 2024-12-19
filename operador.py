@@ -9,8 +9,8 @@ class Operador:
         self.controlador_mp = Controlador_MP()
 
 
-    def cargar_caja_chica(self, ruta, sucursal):
-        movimientos = self.lector.cargar_caja_chica(ruta, sucursal)
+    def cargar_caja_chica(self, ruta, sucursal, met_pago):
+        movimientos = self.lector.cargar_caja_chica(ruta, sucursal, met_pago)
         for movimiento in movimientos:
             self.movimientos.append(movimiento)
         print(self.movimientos)
@@ -27,26 +27,36 @@ class Operador:
         self.controlador_mp.cargar_sdk(api_key)
         print(self.controlador_mp.sdk)    
 
-    def obtener_transferencias_mp(self, dia, mes, año):
+    def obtener_transferencias_mp(self, dia, mes, año, dia_fin, mes_fin, año_fin):
         fecha = f'{año}-{mes}-{dia}T00:00:00Z'
-        movimientos = self.controlador_mp.obtener_transferencias(fecha_inicio=fecha)
+        fecha_fin = f'{año_fin}-{mes_fin}-{dia_fin}T00:00:00Z'
+        movimientos = self.controlador_mp.obtener_transferencias(fecha_inicio=fecha, fecha_fin=fecha_fin)
         for movimiento in movimientos:
             self.movimientos.append(movimiento)
         print(self.movimientos)
     
-    def return_egresos(self):
+    def return_egresos(self, filtro):
         egresos = []
-        for movimiento in self.movimientos:
-            if movimiento.tipo == 'EGRESO':
-                egresos.append(movimiento)
-
+        if filtro == None:
+            for movimiento in self.movimientos:
+                if movimiento.tipo == 'EGRESO':
+                    egresos.append(movimiento)
+        else:
+            for movimiento in self.movimientos:
+                if movimiento.tipo == 'EGRESO' and movimiento.sector == filtro:
+                    egresos.append(movimiento)
         return egresos
 
-    def return_ingresos(self):
+    def return_ingresos(self, filtro):
         ingresos = []
-        for movimiento in self.movimientos:
-            if movimiento.tipo == 'INGRESO':
-                ingresos.append(movimiento)
+        if filtro == None:
+            for movimiento in self.movimientos:
+                if movimiento.tipo == 'INGRESO':
+                    ingresos.append(movimiento)
+        else:
+            for movimiento in self.movimientos:
+                if movimiento.tipo == 'INGRESO' and movimiento.sector == filtro:
+                    ingresos.append(movimiento)
 
         return ingresos
     
