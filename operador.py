@@ -63,8 +63,10 @@ class Operador:
     def añadir_movimiento(self, mov:dict):
         self.movimientos.append(Movimiento(mov))
 
-    def generar_informe(self):
-        self.lector.escribir_informe(self.movimientos)
+    def generar_informe(self, fecha_inicio, fecha_final):
+        print('GENERANDO INFORME')
+        self.lector.escribir_informe(self.movimientos, fecha_inicio, fecha_final)
+
 
     def cargar_excel(self, ruta):
         operaciones = self.lector.cargar_informe(ruta)

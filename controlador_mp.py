@@ -40,10 +40,13 @@ class Controlador_MP:
                 print(r)
                 print('\n')
 
+
         for element in response['response']['results']:
+            fecha = element['date_created'][:10]
+            fecha_formato = fecha[8:] +'-' + fecha[5:7] + '-' + fecha[:4]
             mov = {
                     'tipo': '',
-                    'fecha': element['date_created'],
+                    'fecha': fecha_formato,
                     'categoria': 'Transferencia MP',
                     'met_pago': 'Transferencia',
                     'monto': element['transaction_amount'],

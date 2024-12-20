@@ -135,6 +135,22 @@ class Lector:
         # La lista "movimientos" será aquella en la que guardemos todos los movimientos. 
         # Esta será devuelta al final de la función
 
+        # Hacemos corresponder a cada mes su número para luego formatear bien la fecha
+        meses = {
+            'Ene':'01',
+            'Feb':'02',
+            'Mar':'03',
+            'Abr':'04',
+            'May':'05',
+            'Jun':'06',
+            'Jul':'07',
+            'Ago':'08',
+            'Sep':'09',
+            'Oct':'10',
+            'Nov':'11',
+            'Dic':'12',
+        }
+
         # Por cada fila leída del excel...
         for row in sheet.iter_rows(values_only=True):
             
@@ -159,7 +175,7 @@ class Lector:
                     mov['sector'] = 'ADMIN'
                 else:
                     mov['sector'] = sucursal
-                mov['fecha'] = row[0]
+                mov['fecha'] = row[0][:2] +'-'+ meses[row[0][3:6]] + '-20' + row[0][7:]
                 mov['categoria'] = row[1]
                 mov['obs'] = row[2]
                 mov['monto'] = row[4]
@@ -168,7 +184,7 @@ class Lector:
 
         return self.movimientos
     
-    def escribir_informe(self, movimientos):
+    def escribir_informe(self, movimientos, fecha_inicio, fecha_fin):
         wb = Workbook()
         ws = wb.active
         ws.title = "Informe" + datetime.datetime.now().strftime('%Y-%m-%d')
@@ -181,8 +197,24 @@ class Lector:
         for cell in ws[1]:
             cell.font = Font(bold=True)
 
+        
+        # Filtrado de los datos
+        movimientos_filtrado = []
+        mov_fecha = {}
+        if fecha_inicio == None and fecha_fin == None:
+            movimientos_filtrado = movimientos
+        else:
+            fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%d-%m-%Y')
+            fecha_fin = datetime.datetime.strptime(fecha_fin, '%d-%m-%Y')
+            for movimiento in movimientos:    
+                fecha = datetime.datetime.strptime(movimiento.fecha, '%d-%m-%Y')
+                mov_fecha[movimiento] = fecha
+                if fecha_inicio <= fecha <= fecha_fin:
+                    movimientos_filtrado.append(movimiento)
+            print(movimientos_filtrado)
+
         # Copiar datos de los objetos Movimiento
-        for movimiento in movimientos:
+        for movimiento in movimientos_filtrado:
             fila = [
                 movimiento.tipo,
                 movimiento.fecha,

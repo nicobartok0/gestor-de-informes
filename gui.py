@@ -63,9 +63,11 @@ def menu_callback(sender, data, user_data):
     elif user_data == 'OPCION_CMP':
         dpg.show_item('ventana_transferencias_mp')
     elif user_data == 'OPCION_INFORME':
-        generar_informe()
+        generar_informe(fecha_inicio=None, fecha_fin=None)
     elif user_data == 'OPCION_CARGA_INFORME':
         dpg.show_item('ventana_cargar_informe')
+    elif user_data == 'OPCION_INFORME_FECHA':
+        dpg.show_item('ventana_cargar_informe_fecha')
     else:
         dpg.show_item('ventana_consolidacion_gastos')
             
@@ -134,8 +136,8 @@ def actualizar_tabla_egresos(filtro):
                 for i in range(6):
                     dpg.add_text(f"{elementos[i]}")
 
-def generar_informe():
-    operador.generar_informe()
+def generar_informe(fecha_inicio, fecha_fin):
+    operador.generar_informe(fecha_inicio, fecha_fin)
 
 def añadir_movimiento():
     mov = {
@@ -182,7 +184,9 @@ with dpg.window(tag="MainWindow", label="Gestión de Movimientos de Dinero", wid
             dpg.add_menu_item(label='Cargar consolidación de gastos', callback=menu_callback, user_data='OPCION_CG')
             dpg.add_menu_item(label='Cargar transferencias de Mercado Pago', callback=menu_callback, user_data='OPCION_CMP')
             dpg.add_menu_item(label='Realizar informe automático general', callback=menu_callback, user_data='OPCION_INFORME')
+            dpg.add_menu_item(label='Realizar informe automático desde fecha', callback=menu_callback, user_data='OPCION_INFORME_FECHA')
             dpg.add_menu_item(label='Cargar de informe automático general', callback=menu_callback, user_data='OPCION_CARGA_INFORME')
+            
 
   
     # Crear el Value Registry
@@ -299,7 +303,7 @@ with dpg.window(tag="ventana_caja_chica", label="Cargar caja chica", width=400, 
 with dpg.window(tag="ventana_consolidacion_gastos", label="Cargar consolidación de gastos", width=400, height=200, show=False):
     dpg.add_text("CONSOLIDACIÓN DE GASTOS")
     dpg.add_text('Este EXCEL de Consolidación de Gastos corresponde a la fecha: ')
-    dpg.add_input_text(tag='input_cg', hint='Ej: 27-Nov-24')
+    dpg.add_input_text(tag='input_cg', hint='Ej: DD-MM-YYYY')
     dpg.add_text('Ruta del archivo excel: ')
     dpg.add_button(tag='button_ruta_excel_cg', label='Buscar EXCEL', callback=lambda: dpg.show_item('file_dialog_id_cg'))
 
@@ -322,6 +326,14 @@ with dpg.window(tag='ventana_cargar_informe', label='Cargar Informe', width=400,
     dpg.add_text('Ruta del archivo excel: ')
     dpg.add_button(tag='button_ruta_excel_ci', label='Buscar EXCEL', callback=lambda: dpg.show_item('file_dialog_id_ci'))
 
+# Crear la ventana para CREAR INFORMES DESDE UNA FECHA HASTA OTRA FECHA
+with dpg.window(tag='ventana_cargar_informe_fecha', width=300, height=200, show=False):
+    dpg.add_text("CARGAR INFORME DESDE FECHA")
+    dpg.add_text('Fecha de inicio')
+    dpg.add_input_text(label='DD-MM-YYYY', tag='f_i_cargar_informe')
+    dpg.add_text('Fecha de finalización')
+    dpg.add_input_text(label='DD-MM-YYYY', tag='f_f_cargar_informe')
+    dpg.add_button(label='Realizar informe automático', callback=lambda:operador.generar_informe(fecha_inicio=dpg.get_value('f_i_cargar_informe'), fecha_final=dpg.get_value('f_f_cargar_informe')))
 
 # Configuración y visualización del viewport
 dpg.setup_dearpygui()
