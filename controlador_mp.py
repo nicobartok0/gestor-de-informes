@@ -50,7 +50,7 @@ class Controlador_MP:
                     'categoria': 'Transferencia MP',
                     'met_pago': 'Transferencia',
                     'monto': element['transaction_amount'],
-                    'sector': 'Casa Central',
+                    'sector': 'ADMIN',
                     'obs': ''
                 }
             if element['operation_type'] == 'regular_payment':

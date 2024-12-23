@@ -137,18 +137,18 @@ class Lector:
 
         # Hacemos corresponder a cada mes su número para luego formatear bien la fecha
         meses = {
-            'Ene':'01',
+            'Jan':'01',
             'Feb':'02',
             'Mar':'03',
-            'Abr':'04',
+            'Apr':'04',
             'May':'05',
             'Jun':'06',
             'Jul':'07',
-            'Ago':'08',
+            'Aug':'08',
             'Sep':'09',
             'Oct':'10',
             'Nov':'11',
-            'Dic':'12',
+            'Dec':'12',
         }
 
         # Por cada fila leída del excel...

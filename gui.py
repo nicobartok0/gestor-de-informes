@@ -68,6 +68,8 @@ def menu_callback(sender, data, user_data):
         dpg.show_item('ventana_cargar_informe')
     elif user_data == 'OPCION_INFORME_FECHA':
         dpg.show_item('ventana_cargar_informe_fecha')
+    elif user_data == 'OPCION_CARGA_DB':
+        dpg.show_item('ventana_cargar_db')
     else:
         dpg.show_item('ventana_consolidacion_gastos')
             
@@ -186,6 +188,7 @@ with dpg.window(tag="MainWindow", label="Gestión de Movimientos de Dinero", wid
             dpg.add_menu_item(label='Realizar informe automático general', callback=menu_callback, user_data='OPCION_INFORME')
             dpg.add_menu_item(label='Realizar informe automático desde fecha', callback=menu_callback, user_data='OPCION_INFORME_FECHA')
             dpg.add_menu_item(label='Cargar de informe automático general', callback=menu_callback, user_data='OPCION_CARGA_INFORME')
+            dpg.add_menu_item(label='Cargar movimientos a base de datos', callback=menu_callback, user_data='OPCION_CARGA_DB')
             
 
   
@@ -334,6 +337,15 @@ with dpg.window(tag='ventana_cargar_informe_fecha', width=300, height=200, show=
     dpg.add_text('Fecha de finalización')
     dpg.add_input_text(label='DD-MM-YYYY', tag='f_f_cargar_informe')
     dpg.add_button(label='Realizar informe automático', callback=lambda:operador.generar_informe(fecha_inicio=dpg.get_value('f_i_cargar_informe'), fecha_final=dpg.get_value('f_f_cargar_informe')))
+
+# Crear la ventana para cargar los datos a la base de datos
+with dpg.window(tag='ventana_cargar_db', width=300, height=200, show=False):
+    dpg.add_text("CARGAR DESDE BASE DE DATOS")
+    dpg.add_text('Fecha de inicio')
+    dpg.add_input_text(label='DD-MM-YYYY', tag='f_i_cargar_db')
+    dpg.add_text('Fecha de finalización')
+    dpg.add_input_text(label='DD-MM-YYYY', tag='f_f_cargar_db')
+    dpg.add_button(label='Cargar datos a base de datos', callback=lambda:operador.cargar_movimientos_db(fecha_inicio=dpg.get_value('f_i_cargar_db'), fecha_final=dpg.get_value('f_f_cargar_db')))
 
 # Configuración y visualización del viewport
 dpg.setup_dearpygui()

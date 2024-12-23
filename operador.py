@@ -1,12 +1,15 @@
 from lector import Lector
 from controlador_mp import Controlador_MP
 from movimiento import Movimiento
+from controlador_db import Controlador_DB
+import datetime
 
 class Operador:
     def __init__(self) -> None:
         self.movimientos = []
         self.lector = Lector()
         self.controlador_mp = Controlador_MP()
+        self.controlador_api = Controlador_DB()
 
 
     def cargar_caja_chica(self, ruta, sucursal, met_pago):
@@ -64,7 +67,6 @@ class Operador:
         self.movimientos.append(Movimiento(mov))
 
     def generar_informe(self, fecha_inicio, fecha_final):
-        print('GENERANDO INFORME')
         self.lector.escribir_informe(self.movimientos, fecha_inicio, fecha_final)
 
 
@@ -73,3 +75,18 @@ class Operador:
         for operacion in operaciones:
             self.movimientos.append(operacion)
 
+    def obtener_sucursales(self):
+        print(self.controlador_api.obtener_sucursales())
+
+    def cargar_movimientos_db(self, fecha_inicio, fecha_final):
+        movimientos_filtrados = []
+        fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%d-%m-%Y')
+        fecha_final = datetime.datetime.strptime(fecha_final, '%d-%m-%Y')
+        for movimiento in self.movimientos:    
+            fecha = datetime.datetime.strptime(movimiento.fecha, '%d-%m-%Y')
+            if fecha_inicio <= fecha <= fecha_final:
+                movimientos_filtrados.append(movimiento)
+
+        self.controlador_api.añadir_movimientos(movimientos=movimientos_filtrados)
+                
+    
