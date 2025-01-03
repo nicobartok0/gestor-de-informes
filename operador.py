@@ -42,12 +42,17 @@ class Operador:
         egresos = []
         if filtro == None:
             for movimiento in self.movimientos:
+                print(movimiento.tipo)
                 if movimiento.tipo == 'EGRESO':
                     egresos.append(movimiento)
         else:
             for movimiento in self.movimientos:
-                if movimiento.tipo == 'EGRESO' and movimiento.sector == filtro:
-                    egresos.append(movimiento)
+                if filtro == 'OTRO':
+                    if movimiento.sector not in ['ALVEAR', 'SAN RAFAEL', 'SAN MARTIN', 'GRANJA', 'ADMIN', 'FRIGO']:
+                        egresos.append(movimiento)
+                else:
+                    if movimiento.tipo == 'EGRESO' and movimiento.sector == filtro:
+                        egresos.append(movimiento)
         return egresos
 
     def return_ingresos(self, filtro):
@@ -58,8 +63,12 @@ class Operador:
                     ingresos.append(movimiento)
         else:
             for movimiento in self.movimientos:
-                if movimiento.tipo == 'INGRESO' and movimiento.sector == filtro:
-                    ingresos.append(movimiento)
+                if filtro == 'OTRO':
+                    if movimiento.sector not in ['ALVEAR', 'SAN RAFAEL', 'SAN MARTIN', 'GRANJA', 'ADMIN', 'FRIGO']:
+                        ingresos.append(movimiento)
+                else:
+                    if movimiento.tipo == 'INGRESO' and movimiento.sector == filtro:
+                        ingresos.append(movimiento)
 
         return ingresos
     
@@ -88,5 +97,20 @@ class Operador:
                 movimientos_filtrados.append(movimiento)
 
         self.controlador_api.añadir_movimientos(movimientos=movimientos_filtrados)
+
+    def cargar_registro_contrable(self, ruta, estado):
+        if estado == 'Ingresos':
+            movimientos = self.lector.cargar_registro_contrable(ruta, sheetname='Ingresos')
+            for movimiento in movimientos:
+                
+                self.movimientos.append(movimiento)
+        else:
+            movimientos = self.lector.cargar_registro_contrable(ruta, sheetname='Egresos')
+            for movimiento in movimientos:
+                
+                self.movimientos.append(movimiento)
+
+        
+        print(self.movimientos)
                 
     

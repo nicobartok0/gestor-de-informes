@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Gestor de Informes de Il Porco"
-#define MyAppVersion "1.1.1"
+#define MyAppVersion "1.2.0"
 #define MyAppPublisher "Nicolás Bartolomeo"
 #define MyAppURL "https://www.example.com/"
 #define MyAppExeName "gui.exe"
@@ -36,7 +36,7 @@ LicenseFile=C:\Users\orlando.piccinini\Desktop\gestor-de-informes\LICENSE.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=C:\Users\orlando.piccinini\Desktop
-OutputBaseFilename=Gestor de Informes Il Porco v.1.1.1 SETUP
+OutputBaseFilename=Gestor de Informes Il Porco v.1.2.0 SETUP
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern

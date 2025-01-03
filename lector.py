@@ -125,7 +125,6 @@ class Lector:
                 elif algoritmo == 'TABLA_3':
                     self.algoritmo_tabla_3(row, fecha)
         
-        print(self.movimientos)
         return self.movimientos
 
     def cargar_caja_chica(self, ruta, sucursal, met_pago):
@@ -157,7 +156,7 @@ class Lector:
             # Este IF está para asegurarse de que no estamos tomando una fila llena de valores nulos, ni 
             # estamos tomando los ingresos. Tampoco estamos tomando la primer columna que tiene los 
             # encabezados de las columnas, cuyo primer valor es "fecha".
-            if row[0] != None and row[4] != 0.0 and row[0] != 'fecha':
+            if row[0] != None and row[4] != 0.0 and row[0] != 'fecha' and not 'EGRESO' in row[1] and not 'INGRESO' in row[1] and not 'SUELDO' in row[1] and not 'RETIRO' in row[1]:
                 mov = {
                 'tipo': 'EGRESO',
                 'fecha': '',
@@ -211,7 +210,6 @@ class Lector:
                 mov_fecha[movimiento] = fecha
                 if fecha_inicio <= fecha <= fecha_fin:
                     movimientos_filtrado.append(movimiento)
-            print(movimientos_filtrado)
 
         # Copiar datos de los objetos Movimiento
         for movimiento in movimientos_filtrado:
@@ -223,6 +221,7 @@ class Lector:
                 movimiento.monto,
                 movimiento.sector,
                 movimiento.obs,
+                
             ]
             ws.append(fila)
         
@@ -253,3 +252,70 @@ class Lector:
                 movimientos.append(Movimiento(mov))
         
         return movimientos
+
+    def cargar_registro_contrable(self, ruta, sheetname):
+        self.wb = load_workbook(ruta)
+        sheet = self.wb[sheetname]
+        
+        movimientos = []
+
+        for row in sheet.iter_rows(values_only=True, min_row=9):
+            if row[3] != None:
+                
+                print(row)
+                if sheetname == 'Ingresos':
+                    
+                    mov = {
+                        'fecha': row[1].strftime('%Y-%m-%d'),
+                        'categoria': row[3],
+                        'met_pago': row[5],
+                        'monto': row[6],
+                        'obs': ''
+                    }
+                    
+                    mov['tipo'] = 'INGRESO'
+
+                    if 'Alvear' in row[3]:
+                        mov['sector'] = 'ALVEAR'
+                    elif 'San Martín' in row[3]:
+                        mov['sector'] = 'SAN MARTIN'
+                    elif 'San Rafael' in row[3]:
+                        mov['sector'] = 'SAN RAFAEL'
+                    elif 'Casa Central' in row[3] or 'Casa central' in row[3]:
+                        mov['sector'] = 'ADMIN'
+                    elif 'Granja' in row[3] or 'granja' in row[3] or 'Campo' in row[3] or 'campo' in row[3]:
+                        mov['sector'] = 'GRANJA'
+                    elif 'Frigorífico' in row[3] or 'Frigorifico' in row[3]:
+                        mov['sector'] = 'FRIGO'
+                    else:
+                        mov['sector'] = 'Asignar'
+                else:
+                    
+                    mov = {
+                        'fecha': row[1],
+                        'categoria': row[3],
+                        'met_pago': row[5], #7?
+                        'monto': row[10],
+                        'obs': row[4]
+                    }
+                    if type(row[1]) == datetime.datetime:
+                        mov['fecha'] = row[1].strftime('%Y-%m-%d')
+                    mov['tipo'] = 'EGRESO'
+
+                    if 'Alvear' in row[4]:
+                        mov['sector'] = 'ALVEAR'
+                    elif 'San Martín' in row[4]:
+                        mov['sector'] = 'SAN MARTIN'
+                    elif 'San Rafael' in row[4]:
+                        mov['sector'] = 'SAN RAFAEL'
+                    elif 'Casa Central' in row[4] or 'Casa central' in row[4]:
+                        mov['sector'] = 'ADMIN'
+                    elif 'Granja' in row[4] or 'granja' in row[4] or 'Campo' in row[4] or 'campo' in row[4]:
+                        mov['sector'] = 'GRANJA'
+                    elif 'Frigorífico' in row[4] or 'Frigorifico' in row[4]:
+                        mov['sector'] = 'FRIGO'
+                    else:
+                        mov['sector'] = 'Asignar'
+                movimientos.append(Movimiento(mov))
+        return movimientos
+
